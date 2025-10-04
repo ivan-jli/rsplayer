@@ -5,7 +5,7 @@ use api_models::{
         CardMixer, FilterType, GainLevel, MetadataCommand::RescanMetadata, SystemCommand, UserCommand, VolumeCrtlType,
     },
     settings::{
-        DacSettings, IRInputControlerSettings, MetadataStoreSettings, OLEDSettings, OutputSelectorSettings,
+        DacSettings, IRInputControlerSettings, MetadataStoreSettings, OLEDSettings, OLEDModel, OutputSelectorSettings,
         RsPlayerSettings, Settings,
     },
     validator::Validate,
@@ -55,6 +55,8 @@ pub enum Msg {
     InputRspThreadPriorityChange(String),
     InputVolumeAlsaMixerChanged(String),
     InputDacAddressChanged(String),
+    InputOledDisplayModelChange(OLEDModel),
+    InputOledDevicePathChanged(String),
     ClickRescanMetadataButton(bool),
 
     InputAlsaDeviceChanged(String),
@@ -208,6 +210,13 @@ pub fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             if let Ok(num) = value.parse::<u16>() {
                 model.settings.dac_settings.i2c_address = num;
             };
+        }
+        Msg::InputOledDisplayModelChange(value) => {
+            model.settings.oled_settings.display_model = value;
+
+        }
+        Msg::InputOledDevicePathChanged(value) => {
+            model.settings.oled_settings.spi_device_path = value;
         }
         Msg::SettingsFetched(sett) => {
             model.waiting_response = false;
@@ -609,7 +618,19 @@ fn view_oled_display(oled_settings: &OLEDSettings) -> Node<Msg> {
                 C!["control"],
                 div![
                     C!["select"],
-                    select![option![attrs!( At::Value => "ST7920"), "ST7920 - 128x64"],],
+                    select![
+                        OLEDModel::iter().map(|oled_type|{
+                            let v: &str = oled_type.into();
+                            option![
+                                attrs!( At::Value => v), 
+                                IF!(
+                                    oled_settings.display_model == oled_type => attrs!(At::Selected => "")),
+                                v
+                            ]
+                        })],
+                        input_ev(Ev::Change, |v| {
+                            Msg::InputOledDisplayModelChange(OLEDModel::from_str(v.as_str()).expect("msg"))
+                        }),
                 ],
             ],
         ],
@@ -618,7 +639,12 @@ fn view_oled_display(oled_settings: &OLEDSettings) -> Node<Msg> {
             label!["SPI Device path:", C!["label", "has-text-white"]],
             div![
                 C!["control"],
-                input![C!["input"], attrs! {At::Value => oled_settings.spi_device_path},],
+                input![
+                    C!["input"], 
+                    attrs! {
+                        At::Value => oled_settings.spi_device_path
+                    },],
+                    input_ev(Ev::Input, move |value| { Msg::InputOledDevicePathChanged(value) })
             ],
         ],
     ]

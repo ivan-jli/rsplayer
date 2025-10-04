@@ -1,9 +1,13 @@
 use std::collections::HashMap;
+use std::string::ParseError;
 
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::common::{AudioCard, CardMixer, FilterType, GainLevel, PcmOutputDevice, VolumeCrtlType};
+use strum_macros::EnumIter;
+use strum_macros::EnumString;
+use strum_macros::IntoStaticStr;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Validate)]
 pub struct Settings {
@@ -154,8 +158,23 @@ pub struct IRInputControlerSettings {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OLEDSettings {
     pub enabled: bool,
-    pub display_model: String,
+    pub display_model: OLEDModel,
     pub spi_device_path: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, EnumString, EnumIter, IntoStaticStr)]
+pub enum OLEDModel {
+    ST7920_128x64,
+    SSD1306_128x64,
+}
+
+impl From::<OLEDModel> for String {
+    fn from(value: OLEDModel) -> Self {
+        match value {
+            OLEDModel::ST7920_128x64 => "ST7920_128x64".into(),
+            OLEDModel::SSD1306_128x64 => "SSD1306_128x64".into(),
+        }
+    }
 }
 
 impl Default for MetadataStoreSettings {
@@ -224,8 +243,8 @@ impl Default for Settings {
             },
             oled_settings: OLEDSettings {
                 enabled: false,
-                display_model: "ST7920 - 128x64".to_string(),
-                spi_device_path: "/dev/spidev0.0".to_string(),
+                display_model: OLEDModel::SSD1306_128x64.into(),
+                spi_device_path: "/dev/i2c-1".to_string(),
             },
             playlist_settings: PlaylistSetting::default(),
             rs_player_settings: RsPlayerSettings::default(),

@@ -3,12 +3,7 @@ use rsplayer_config::ArcConfiguration;
 use tokio::sync::broadcast::Receiver;
 
 pub async fn write(state_changes_rx: Receiver<StateChangeEvent>, config: ArcConfiguration) {
-    let settings = config.get_settings();
-    if settings.oled_settings.enabled {
-        hw_oled::write(state_changes_rx, settings.oled_settings).await;
-    } else {
-        crate::common::logging_receiver_future(state_changes_rx).await;
-    }
+    hw_oled::write(state_changes_rx, config.get_settings().oled_settings).await;
 }
 
 mod hw_oled {

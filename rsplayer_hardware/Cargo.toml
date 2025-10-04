@@ -30,3 +30,4 @@ evdev = { version = "0.12.2", features = ["tokio"] }
 #oled
 embedded-graphics = { version = "0.8.1" }
 st7920 = { version = "0.4.0" }
+ssd1306 = "0.10.0"

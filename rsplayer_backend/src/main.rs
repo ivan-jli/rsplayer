@@ -18,7 +18,7 @@ use rsplayer_config::Configuration;
 use rsplayer_hardware::audio_device::audio_service::AudioInterfaceService;
 use rsplayer_hardware::input::ir_lirc;
 use rsplayer_hardware::input::volume_rotary;
-use rsplayer_hardware::oled::st7920;
+use rsplayer_hardware::oled;
 use rsplayer_metadata::album_repository;
 use rsplayer_metadata::metadata_service::MetadataService;
 use rsplayer_metadata::play_statistic_repository::PlayStatisticsRepository;
@@ -128,7 +128,7 @@ async fn main() {
             error!("Exit from Volume control thread.");
         }
 
-        _ = spawn(st7920::write(state_changes_tx.subscribe(), config.clone())) => {
+        _ = spawn(oled::write(state_changes_tx.subscribe(), config.clone())) => {
             error!("Exit from OLED writer thread.");
         }
 
