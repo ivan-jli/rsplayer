@@ -23,6 +23,8 @@ carries the per-file detail — this page is the map.
 | `crates/desktop` | Tauri wrapper: embeds the backend in-process, webview UI, OS media keys |
 | `web-ui` | Dioxus web frontend (not covered here) |
 
+External (sibling repos, not workspace members): **[rsplayer_firmware](https://github.com/ljufa/rsplayer_firmware)** — RP2040 USB front panel (`wire`); **`rsplayer_pocket_dap`** — 240×240 DAP window UI over WebSocket (`api_models`). Screen flow: [Pocket DAP Views](pocket_dap/views.md) (stub → sibling repo).
+
 Dependency direction (roughly): `server → {sync, playback, metadata, podcast, hardware, config, dsp} → api_models`. `playback` depends on `metadata` (probe/codec registries, loudness) and `dsp`; `sync` depends on `playback` (tee, sink); `hardware` depends on `wire`. `podcast` depends only on `api_models` and `config`; the server adapts it to playback's `ResumePositionProvider` so the two never depend on each other.
 
 ## Process Shape

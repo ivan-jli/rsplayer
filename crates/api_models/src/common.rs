@@ -35,6 +35,8 @@ pub enum MetadataLibraryItem {
         name: String,
         #[serde(default)]
         id: String,
+        #[serde(default)]
+        artist: String,
         year: Option<DateTime<Utc>>,
     },
     Empty,
