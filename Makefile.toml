@@ -4,7 +4,7 @@ CROSS_TARGET_DIR = { value = "target/cross", condition = { env_not_set = ["CI"] 
 
 # TARGET_HOST = "192.168.5.3"
 # TARGET = "arm-unknown-linux-gnueabihf"
-TARGET_HOST = "192.168.5.4"
+TARGET_HOST = "rpi-5-dev"
 TARGET = "aarch64-unknown-linux-gnu"
 # Version single source of truth is [workspace.package] in Cargo.toml
 # TARGET = "x86_64-unknown-linux-gnu"
